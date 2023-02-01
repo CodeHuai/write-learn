@@ -1,3 +1,1 @@
-import {deepClone} from './mulWrite/deepClone'
-
-deepClone()
+import './mulWrite/clone/index'
