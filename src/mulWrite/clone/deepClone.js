@@ -1,5 +1,5 @@
 /**
- * 深拷贝
+ * 深拷贝  forin -  考虑负责类型还是原始类型 - 考虑数组 - 循环引用
  */
 
 // 乞丐版
@@ -67,8 +67,36 @@ export const beggar = {
       return target;
     }
   },
-  // 还需要考虑 Array 以及 null 的情况
-  DeepCloneFun6: () => {
+  // 取消forin遍历的方式，采用遍历效率高点的方式进行遍历
+  DeepCloneFun6: (target, map = new WeakMap()) => {
+    if (typeof target === 'object') {
+      const isArray = Array.isArray(target);
+      let cloneTarget = isArray ? [] : {};
 
+      if (map.get(target)) {
+        return map.get(target);
+      }
+      map.set(target, cloneTarget);
+
+      const keys = isArray ? undefined : Object.keys(target);
+      beggar.forEach(keys || target, (value, key) => {
+        if (keys) {
+          key = value;
+        }
+        cloneTarget[key] = beggar.DeepCloneFun6(target[key], map);
+      });
+
+      return cloneTarget;
+    } else {
+      return target;
+    }
+  },
+  forEach: (array, iteratee) => {
+    let index = -1;
+    const length = array.length;
+    while (++index < length) {
+      iteratee(array[index], index);
+    }
+    return array;
   }
 }
